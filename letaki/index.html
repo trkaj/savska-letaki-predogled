@@ -1,0 +1,353 @@
+<!doctype html><html lang="sl"><head>
+<meta name="robots" content="noindex"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Letaki Savske ankete</title>
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#111;font-size:18px;background:#f3f6f1}
+header{background:#0a5232;color:#fff;padding:12px 16px}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;font-size:15px}
+.blok{background:#fff;margin:10px;padding:14px;border-radius:12px;box-shadow:0 1px 3px #0002}
+.blok h2{margin:0 0 10px;font-size:19px;color:#063a23}
+input,textarea{font-size:18px;padding:12px;border:2px solid #888;border-radius:10px;width:100%;font-family:inherit}
+button{font-size:18px;padding:12px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:700;font-family:inherit}
+.g{background:#0a5232;color:#fff}.z{background:#2e9e5b;color:#fff}.s{background:#e4e4e4;color:#222}.r{background:#ffd84d;color:#063a23}
+.siroko{width:100%;margin-top:8px}
+#ulice{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#ulice button{background:#e6efe9;color:#063a23;text-align:left;padding:12px}
+#ulice small{display:block;font-weight:400;font-size:14px;color:#444}
+#stevilke{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-top:10px}
+.t{border:2px solid #aaa;background:#fff;border-radius:10px;padding:8px 4px;text-align:center;font-weight:700;font-size:20px;color:#111}
+.t small{display:block;font-size:12px;font-weight:400;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t.prevzeto{background:#fff4c2;border-color:#d9b400}.t.razdeljeno{background:#dff3e6;border-color:#2e9e5b}
+.moj{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eee}
+#obv{position:fixed;left:10px;right:10px;bottom:10px;background:#063a23;color:#fff;padding:14px;border-radius:12px;font-weight:700;display:none;z-index:2000;text-align:center}
+#okno{position:fixed;inset:0;background:#0007;display:none;z-index:1500;align-items:flex-end;justify-content:center}
+#okno .blok{width:100%;max-width:520px;margin:0;border-radius:16px 16px 0 0;max-height:90vh;overflow:auto}
+#map{height:72vh;min-height:380px;border-radius:0;margin:0 -14px -14px}
+.blok.karta{margin:0 0 10px;border-radius:0;padding:14px 14px 14px}
+.leg span{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid #333;vertical-align:-2px;margin:0 4px 0 10px}
+.mal{font-size:15px;color:#444}
+.trak{height:30px;background:#e4e4e4;border-radius:15px;overflow:hidden;margin:8px 0}.trak div{height:100%;background:#2e9e5b;transition:width .6s}
+#stevec .vel{font-size:22px;font-weight:800;color:#063a23;margin:0}
+.lv{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid #eee}.lv .m{width:34px;font-size:22px;text-align:center;font-weight:800}
+.lv .v{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis}.lv .n{font-weight:800;font-size:20px}.lv .zn{font-size:13px;color:#0a5232;display:block;font-weight:400}
+.lv.jaz{background:#fff4c2;border-radius:8px}
+.trak{position:relative}.trak i{position:absolute;top:0;bottom:0;width:2px;background:#fff9}.trak b{position:absolute;top:32px;font-size:12px;color:#555;transform:translateX(-50%)}
+.trakw{position:relative;padding-bottom:16px}
+#ulice button.pokrita{background:#2e9e5b;color:#fff}#ulice button.pokrita small{color:#eafff0}
+.zav{display:flex;gap:6px;margin-bottom:8px}.zav button{flex:1;background:#e4e4e4;color:#222;padding:10px}.zav button.ak{background:#0a5232;color:#fff}
+.pogl{display:flex;gap:6px;overflow-x:auto;padding:10px 10px 0;max-width:720px;margin:0 auto}.pogl button{flex:0 0 auto;background:#e4e4e4;color:#222;padding:10px 14px;font-size:17px;margin:0;border-radius:10px}.pogl button.ak{background:#0a5232;color:#fff}
+.zakl{background:#eef7f1;border:2px solid #2e9e5b;border-radius:10px;padding:10px;font-size:18px}
+.proslava{text-align:center}.proslava .vel{font-size:28px;font-weight:800;color:#063a23;margin:10px 0}
+#diplPlatno{width:100%;height:auto;border:1px solid #ddd;border-radius:6px;background:#fffdf5}
+.citat{font-size:21px;font-style:italic;line-height:1.4;margin:6px 0;color:#063a23}.avtor{text-align:right;color:#444;margin:0 0 14px}
+details.ek{border-bottom:1px solid #e3e3e3}details.ek summary{list-style:none;display:flex;gap:8px;align-items:center;padding:10px 2px;cursor:pointer;font-size:18px}
+details.ek summary::-webkit-details-marker{display:none}details.ek summary .v{flex:1;font-weight:700}details.ek summary .c{color:#555;font-size:15px}
+details.ek summary:after{content:'▸';color:#888}details.ek[open] summary:after{content:'▾'}details.ek.jaz summary{background:#fff4c2;border-radius:8px}
+.ekGumb{text-align:right;padding:8px 14px}.clan{display:flex;justify-content:space-between;padding:6px 14px;font-size:16px;border-top:1px dashed #eee}
+.ogt{background:#fff;border:2px solid #111;color:#111;font:bold 11px/16px system-ui;text-align:center;box-sizing:border-box;border-radius:2px}#ogledVkl{width:22px;height:22px;margin:0 6px 0 0;vertical-align:middle;display:inline-block}
+.ogt.d{background:#111;color:#fff}#ogledBox{display:none;margin:8px 0 0;font-size:16px}.ogb{display:flex;gap:6px;margin-top:6px}.ogb button{flex:1;padding:8px;font-size:16px;border:2px solid #111;border-radius:8px;background:#fff}.ogb button.iz{background:#111;color:#fff}
+</style></head><body>
+<header><h1 id="glava">Razdeljevanje v Savskem naselju</h1><p id="podglava">Kdo nese gradivo na kateri naslov</p></header>
+<nav class="pogl" id="poglavja"></nav>
+
+<div class="blok" id="stevec"><p class="mal">Nalagam …</p></div>
+<div class="blok" id="lestvica" style="display:none"></div>
+<div class="blok" id="jaz"></div>
+<div class="blok" id="moji" style="display:none"></div>
+<div class="blok" id="zbirkaBlok" style="display:none"></div>
+
+<div class="blok" id="ekipeBlok"><h2>Ekipe</h2><div id="ekipeSez"></div></div>
+
+<div class="blok" id="uliceBlok"><h2>Izberi ulico</h2><div id="ulice"></div>
+<div id="ulica" style="display:none"><h2 id="ulicaIme" style="margin-top:14px"></h2>
+<p class="mal">Klikni številko. Rumeno je že vzeto, zeleno je razdeljeno.</p>
+<button class="g siroko" id="vseProste"></button><div id="stevilke"></div></div></div>
+
+<div class="blok karta"><h2>Zemljevid</h2><p class="mal leg">Pregled: <span style="background:#c9c9c9"></span>prosto<span style="background:#ffd84d"></span>vzeto<span style="background:#2e9e5b"></span>razdeljeno</p>
+<p id="povzetek" class="mal"></p><div id="map"></div><div id="ogledBox"><label><input type="checkbox" id="ogledVkl" onchange="ogledPlast()"> Točke ogleda</label> <span class="mal">(vidno samo prijavljenim; tvoja ocena ostane na tvoji napravi in gre v tabelo, rezultatov ne objavljamo pred volitvami 15. 11.)</span></div><p style="margin:10px 0 0"><b>🖨 Natisni zemljevid</b> <span class="mal">(A4 ležeče)</span></p><div style="display:flex;gap:8px"><button class="s" style="flex:1" onclick="tisk('barvno')">Barvno</button><button class="s" style="flex:1" onclick="tisk('cb')">Črno-belo</button></div></div>
+
+<p class="mal" style="padding:0 16px 30px">Težave? Pokliči ali pošlji SMS na 070 205 595. Vse je zapisano tudi v <a id="tabela" href="#">tabeli</a>.</p>
+
+<div id="okno" onclick="if(event.target==this)zapri()"><div class="blok" id="oknoVsebina"></div></div>
+<div id="obv"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* POGLAVJA – vsako razdeljevanje je svoje poglavje = svoj zavihek v isti tabeli.
+   Poglavja dodajaš na /letaki/admin/ (skript v4); seznam stran prebere s SKRIPT?akcija=poglavja.
+   Spodaj je le rezerva (1. poglavje), če skript ne odgovori ali je še stara različica.
+   id poglavja se po objavi ne sme spreminjati (po njem so shranjeni mejniki v brskalnikih).
+   Značke in zbirka citatov so skupne vsem poglavjem; mejniki in Zaključevalec so po poglavjih. */
+const SHEET='12I4SGnEltzkDz9gi7KAxZhPlZJfR4VJh3HH9SVhokPM';
+const SKRIPT='https://script.google.com/macros/s/AKfycbw1885AEWkP3HCtg7dWEFYgQWxBJ0vlH4-tYmljBP2MKqVvwfljmgTEKfe7utxCJCTL/exec';
+let POGLAVJA=[{id:'p1-anketa', st:1, naslov:'Savska anketa', opis:'Letaki z vabilom k anketi', zavihek:'', od:'2026-10-31', stanje:'aktivno'}];
+// 1. poglavje bere prvi zavihek (brez &sheet=), da deluje tudi, če ga kdo preimenuje
+const csvZa=p=>'https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?tqx=out:csv&headers=1'+(p.zavihek&&p.id!='p1-anketa'?'&sheet='+encodeURIComponent(p.zavihek):'');
+let P,ZAKLJ,PIME,CSV;
+const pk=k=>P.id+':'+k; // ključ v localStorage za to poglavje
+// selitev starih ključev (pred poglavji) v 1. poglavje – nihče ne izgubi mejnikov
+try{if(!localStorage.getItem('letaki_migr_p1')){for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);
+ if(k=='letaki_mejniki'||k.startsWith('letaki_zakljucil_')){if(localStorage.getItem('p1-anketa:'+k)==null)localStorage.setItem('p1-anketa:'+k,localStorage.getItem(k))}}localStorage.setItem('letaki_migr_p1','1')}}catch(e){}
+document.getElementById('tabela').href='https://docs.google.com/spreadsheets/d/'+SHEET+'/edit';
+function initPoglavje(){const q=new URLSearchParams(location.search).get('p')||location.hash.replace(/^#p=?/,'');let ls='';try{ls=localStorage.getItem('letaki_poglavje')||''}catch(e){}
+ const akt=POGLAVJA.filter(p=>p.stanje=='aktivno');
+ P=POGLAVJA.find(p=>p.id==q)||(ls.split('|')[1]==String(POGLAVJA.length)?POGLAVJA.find(p=>p.id==ls.split('|')[0]&&p.stanje=='aktivno'):null)||akt[akt.length-1]||POGLAVJA[POGLAVJA.length-1];
+ ZAKLJ=P.stanje!='aktivno';PIME=P.st+'. poglavje: '+P.naslov;CSV=csvZa(P);
+ document.title=PIME+' – razdeljevanje';
+ document.getElementById('glava').textContent=PIME;
+ document.getElementById('podglava').textContent=(P.opis?P.opis+' · ':'')+(ZAKLJ?'poglavje je zaključeno, hvala vsem!':'kdo nese gradivo na kateri naslov');
+ const nav=document.getElementById('poglavja');nav.style.display=POGLAVJA.length>1?'flex':'none';
+ nav.innerHTML=POGLAVJA.length>1?POGLAVJA.map(p=>'<button class="'+(p.id==P.id?'ak':'')+'" onclick="izberiPoglavje(\''+p.id+'\')">'+p.st+'. poglavje · '+String(p.naslov).replace(/[&<>"]/g,'')+(p.stanje!='aktivno'?' ✓':'')+'</button>').join(''):'';
+ ['jaz','moji','uliceBlok'].forEach(i=>{if(ZAKLJ)document.getElementById(i).style.display='none'});if(!ZAKLJ)document.getElementById('uliceBlok').style.display=''}
+initPoglavje();
+// seznam poglavij iz skripta v4 (rezerva: vgrajeno 1. poglavje)
+const nalozenaPoglavja=Promise.race([fetch(SKRIPT+'?akcija=poglavja&t='+Date.now()).then(r=>r.json()).then(j=>{
+ if(j&&j.ok&&Array.isArray(j.poglavja)&&j.poglavja.length){POGLAVJA=j.poglavja.filter(p=>p&&p.id).map(p=>({id:String(p.id),st:+p.st||1,naslov:String(p.naslov||''),opis:String(p.opis||''),zavihek:String(p.zavihek||''),od:String(p.od||''),stanje:p.stanje=='aktivno'?'aktivno':'zaključeno'})).sort((a,b)=>a.st-b.st);initPoglavje()}}),new Promise(r=>setTimeout(r,6000))]).catch(e=>console.warn('poglavja',e));
+// izbira se zapomni, dokler ne pride novo poglavje – takrat vsi privzeto vidijo najnovejše aktivno
+const ekKljuc=()=>'letaki_ekipa:'+(ime||'').trim().toLowerCase();
+function ekipaGet(){let v=localStorage.getItem(ekKljuc());if(v===null)v=localStorage.getItem('letaki_ekipa')||'';return v.trim()}
+function ekipaUI(uredi){const b=document.getElementById('ekBox');if(!b)return;const v=ekipaGet();
+ if(v&&!uredi){b.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="ekOk">✓ Ekipa: '+esc(v)+' · '+clanov((clani()[malo(v)]||{size:1}).size)+'</b><button class="s" onclick="obdrziMesto(()=>ekipaUI(1))">Spremeni</button></div>';return}
+ b.innerHTML='<label class="mal" for="ekipa" style="display:block">Ekipa (neobvezno, npr. Majaronova, Družina K.)</label><div style="display:flex;gap:8px"><input id="ekipa" maxlength="30" placeholder="brez ekipe" style="flex:1" value="'+esc(v)+'" onkeydown="if(event.key==\'Enter\'){event.preventDefault();potrdiEkipo()}"><button class="s" onclick="potrdiEkipo()">Potrdi ekipo</button></div>';
+ if(uredi)document.getElementById('ekipa').focus()}
+function obdrziMesto(fn,id){const j=document.getElementById(id||'jaz'),y=j.getBoundingClientRect().top;fn();const d=j.getBoundingClientRect().top-y;if(Math.abs(d)>1)window.scrollBy(0,d)}
+function potrdiEkipo(){nastaviEkipo(document.getElementById('ekipa').value)}
+// v6: člani ekip na strežniku (SRV=null → skript še v5, deluje samo lokalno)
+let SRV=null;
+function nastaviEkipo(v,sidro){v=String(v||'').trim().replace(/\s+/g,' ').slice(0,30);if(!ime){obv('Najprej se predstavi – vpiši vzdevek zgoraj.',1);return}const prej=ekipaGet();
+ localStorage.setItem(ekKljuc(),v);
+ if(SRV){SRV=SRV.filter(c=>malo(c.kdo)!=malo(ime));if(v)SRV.push({kdo:ime,ekipa:v})}
+ obdrziMesto(()=>{ekipaUI();lestvica();ekipeSeznam(v||(sidro?prej:''))},sidro);obv(v?'Ekipa potrjena: '+v:'Brez ekipe.',0);
+ try{fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:'ekipa',poglavje:P.id,kdo:ime,ekipa:v,cas:new Date().toISOString()})}).catch(()=>{})}catch(e){}}
+function pridruzi(b){nastaviEkipo(b.dataset.e,'ekipeBlok')}
+function zapusti(){if(!ime)return;nastaviEkipo('','ekipeBlok')}
+async function naloziEkipe(){try{const j=await (await fetch(SKRIPT+'?akcija=ekipe&poglavje='+encodeURIComponent(P.id)+'&t='+Date.now())).json();
+ if(!(j&&j.ok&&+j.razlicica>=6&&Array.isArray(j.clani)))return;
+ SRV=j.clani.filter(c=>c&&c.kdo&&c.ekipa).map(c=>({kdo:String(c.kdo).slice(0,30),ekipa:String(c.ekipa).slice(0,30)}));
+ if(!ime)return;const m=SRV.find(c=>malo(c.kdo)==malo(ime)),lok=ekipaGet();
+ if(!lok){if(localStorage.getItem(ekKljuc())===null&&m)localStorage.setItem(ekKljuc(),m.ekipa);return}
+ // ekipa, potrjena pred v6 (samo na telefonu): enkrat na nalaganje tiho pošlji na strežnik
+ if(!naloziEkipe.poslano&&(!m||malo(m.ekipa)!=malo(lok))){naloziEkipe.poslano=1;SRV=SRV.filter(c=>malo(c.kdo)!=malo(ime));SRV.push({kdo:ime,ekipa:lok});
+  fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:'ekipa',poglavje:P.id,kdo:ime,ekipa:lok.slice(0,30),cas:new Date().toISOString()})}).catch(()=>{})}}catch(e){}}
+function clanov(n){return n+' '+(n%100==1?'član':n%100==2?'člana':n%100==3||n%100==4?'člani':'članov')}
+function clani(){const o={};ekipeData().forEach(t=>o[malo(t.v)]={size:Object.keys(t.m).length});return o}
+function clani_old(){const m={};Object.values(stanje).forEach(x=>{if(!x.e)return;const k=malo(x.e);m[k]=m[k]||new Set();[x.r,x.p].forEach(v=>{v=malo(v);if(v&&v!='da')m[k].add(v)})});
+ const e=malo(ekipaGet());if(e&&ime){(m[e]=m[e]||new Set()).add(malo(ime))}return m}
+function ekipeData(){const T={},add=(t,v,d)=>{v=(v||'').trim();if(!v||malo(v)=='da')return;const m=t.m[malo(v)]=t.m[malo(v)]||{v,d:0};m.d+=d};
+ Object.values(stanje).forEach(x=>{if(!x.e)return;const k=malo(x.e),t=T[k]=T[k]||{v:x.e.trim(),n:0,m:{}};if(x.s=='razdeljeno'){t.n++;add(t,x.r||x.p,1)}else add(t,x.p,0)});
+ const e=ekipaGet();if(e&&ime){const t=T[malo(e)]=T[malo(e)]||{v:e,n:0,m:{}};add(t,ime,0)}
+ if(SRV)SRV.forEach(c=>{if(ime&&malo(c.kdo)==malo(ime))return;const k=malo(c.ekipa),t=T[k]=T[k]||{v:c.ekipa.trim(),n:0,m:{}};add(t,c.kdo,0)});
+ return Object.values(T).sort((a,b)=>b.n-a.n||a.v.localeCompare(b.v,'sl'))}
+function ekipeHTML(list,medalje,odpri){const M=['🥇','🥈','🥉'],me=malo(ekipaGet());return list.map((t,i)=>{const cl=Object.values(t.m).sort((a,b)=>b.d-a.d||a.v.localeCompare(b.v,'sl'));
+ const moja=me&&malo(t.v)==me;
+ return '<details class="ek'+(moja?' jaz':'')+'"'+(odpri&&malo(odpri)==malo(t.v)?' open':'')+'><summary>'+(medalje?'<span>'+(M[i]||(i+1)+'.')+'</span>':'')+'<span class="v">'+esc(t.v)+'</span><span class="c">'+clanov(cl.length)+' · razdeljenih '+t.n+'</span></summary>'+
+ cl.map(c=>'<div class="clan"><span>'+esc(c.v)+'</span><span>'+c.d+'</span></div>').join('')+(medalje?'':'<div class="ekGumb">'+(moja?'<button class="s" onclick="zapusti()">Zapusti ekipo</button>':'<button class="s" data-e="'+esc(t.v)+'" onclick="pridruzi(this)">Pridruži se</button>')+'</div>')+'</details>'}).join('')}
+function ekipeSeznam(odpri){const b=document.getElementById('ekipeSez');if(!b)return;if(!imaStolpce){b.innerHTML='<p class="mal">Ekipe se pokažejo, ko je posodobljen skript.</p>';return}
+ const l=ekipeData();b.innerHTML=l.length?'<p class="mal">Klikni ekipo za seznam članov (število = razdeljeni vhodi).</p>'+ekipeHTML(l,0,odpri):'<p class="mal">Še ni ekip – vpiši ime ekipe zgoraj.</p>'}
+function tisk(n){window.open('tisk.html?p='+encodeURIComponent(P.id)+'&nacin='+n+'&natisni=1','_blank')}
+function izberiPoglavje(id){try{localStorage.setItem('letaki_poglavje',id+'|'+POGLAVJA.length)}catch(e){}location.search='?p='+encodeURIComponent(id)}
+const norm=s=>(s||'').trim().replace(/\s+/g,' ').replace(/-/g,'–');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function parseCSV(t){const r=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];
+ if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+ else if(c=='"')q=true;else if(c==','){row.push(f);f=''}else if(c=='\n'){row.push(f);r.push(row);row=[];f=''}else if(c!='\r')f+=c}
+ if(f||row.length){row.push(f);r.push(row)}return r}
+const BARVA={prosto:'#c9c9c9',prevzeto:'#ffd84d',razdeljeno:'#2e9e5b'};
+let VH=[],tocke=[],stanje={},izbrana=null;
+let ime=localStorage.getItem('vzdevek')||'';
+const st=i=>stanje[VH[i].k]||{s:'prosto',p:'',r:'',o:''};
+const jeMoj=i=>ime&&st(i).p.toLowerCase()==ime.toLowerCase();
+function obv(t,ms){const o=document.getElementById('obv');o.textContent=t;o.style.display='block';clearTimeout(obv.t);if(ms!==0)obv.t=setTimeout(()=>o.style.display='none',ms||3500)}
+function jaz(){const b=document.getElementById('jaz');
+ if(!ime){b.innerHTML='<h2>1. Kdo si?</h2><p class="mal">Vpiši samo vzdevek ali začetnice, ne pravega imena. Telefon si ga zapomni.</p><input id="ime" placeholder="npr. Sosed7 ali A. K." maxlength="30"><button class="g siroko" onclick="shraniIme()">Naprej</button>';}
+ else b.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>Živjo, '+esc(ime)+'!</b><button class="s" onclick="ime=\'\';localStorage.removeItem(\'vzdevek\');osvezi()">Nisem jaz</button></div><div id="ekBox" style="margin-top:10px"></div>';ekipaUI()}
+function shraniIme(){const v=document.getElementById('ime').value.trim();if(!v){obv('Vpiši vzdevek ali začetnice.');return}ime=v;localStorage.setItem('vzdevek',v);osvezi()}
+function moji(){const b=document.getElementById('moji');const m=VH.map((v,i)=>i).filter(jeMoj);
+ if(!ime||!m.length){b.style.display='none';return}b.style.display='block';
+ const ost=m.filter(i=>st(i).s!='razdeljeno');
+ b.innerHTML='<h2>Moji naslovi ('+m.length+', razdeljenih '+(m.length-ost.length)+')</h2>'+
+  m.map(i=>'<div class="moj"><span>'+esc(VH[i].u+' '+VH[i].n)+(st(i).s=='razdeljeno'?' ✅':'')+'</span>'+(st(i).s=='razdeljeno'?'':'<button class="z" onclick="akcija(['+i+'],\'razdeljeno\')">Razdelil sem</button>')+'</div>').join('')+
+  (ost.length>1?'<button class="z siroko" onclick="if(confirm(\'Si razdelil vseh '+ost.length+'?\'))akcija(['+ost.join(',')+'],\'razdeljeno\')">Razdelil sem vse ('+ost.length+')</button>':'');}
+function ulice(){const U=[...new Set(VH.map(v=>v.u))];
+ document.getElementById('ulice').innerHTML=U.map(u=>{const ix=VH.map((v,i)=>i).filter(i=>VH[i].u==u);const pr=ix.filter(i=>st(i).s=='prosto').length;
+  const rz=ix.filter(i=>st(i).s=='razdeljeno').length,pk=rz==ix.length;
+  return '<button class="'+(pk?'pokrita':'')+'" onclick="odpri(\''+esc(u)+'\')">'+(pk?'✅ ':'')+esc(u)+'<small>razdeljeno '+rz+'/'+ix.length+(pk?' · pokrita!':pr?' · prostih '+pr:' · vse vzeto')+'</small></button>'}).join('');
+ if(izbrana)odpri(izbrana,true)}
+function odpri(u,tiho){izbrana=u;const ix=VH.map((v,i)=>i).filter(i=>VH[i].u==u);
+ document.getElementById('ulica').style.display='block';document.getElementById('ulicaIme').textContent=u;
+ const pr=ix.filter(i=>st(i).s=='prosto');const g=document.getElementById('vseProste');
+ g.style.display=pr.length>1?'block':'none';g.textContent='Vzamem vse proste na tej ulici ('+pr.length+')';
+ g.onclick=()=>{if(confirm('Vzameš '+pr.length+' naslovov na ulici '+u+'?'))akcija(pr,'prevzemi')};
+ document.getElementById('stevilke').innerHTML=ix.map(i=>{const s=st(i);return '<button class="t '+s.s+'" onclick="naslov('+i+')">'+esc(VH[i].n)+'<small>'+(s.s=='razdeljeno'?'✅ '+esc(s.r):s.p?esc(s.p):'prosto')+'</small></button>'}).join('');
+ if(!tiho)document.getElementById('ulicaIme').scrollIntoView({behavior:'smooth'})}
+function naslov(i){const s=st(i),v=VH[i];let h='<h2>'+esc(v.u+' '+v.n)+'</h2>';
+ if(ZAKLJ){h+='<p>'+(s.s=='razdeljeno'?'✅ Razdelil: <b>'+esc(s.r)+'</b>':'Ta naslov v tem poglavju ni bil označen.')+'</p>'+(s.o?'<p class="mal">'+esc(s.o)+'</p>':'')+'<button class="s siroko" onclick="zapri()">Zapri</button>';document.getElementById('oknoVsebina').innerHTML=h;document.getElementById('okno').style.display='flex';return}
+ h+='<p>'+(s.s=='razdeljeno'?'✅ Razdelil: <b>'+esc(s.r)+'</b>'+(s.p&&s.p!=s.r?' (vzel '+esc(s.p)+')':''):s.p?'Vzel: <b>'+esc(s.p)+'</b>':'Še nihče ga ni vzel.')+'</p>';
+ if(s.s=='prosto')h+='<button class="g siroko" onclick="akcija(['+i+'],\'prevzemi\')">Vzamem ta naslov</button>';
+ if(s.s!='razdeljeno')h+='<button class="z siroko" onclick="akcija(['+i+'],\'razdeljeno\')">Razdelil sem</button>';
+ if(s.p&&jeMoj(i))h+='<button class="s siroko" onclick="if(confirm(\'Res sprostiš ta naslov?\'))akcija(['+i+'],\'sprosti\')">Ne bom jaz, sprosti</button>';
+ h+='<p style="margin:16px 0 4px"><b>Opomba</b> <span class="mal">(npr. ni nabiralnika, zaklenjeno)</span></p>'+(s.o?'<p class="mal">'+esc(s.o)+'</p>':'')+
+  '<textarea id="opomba" rows="2" maxlength="200"></textarea><button class="r siroko" onclick="akcija(['+i+'],\'opomba\')">Shrani opombo</button><button class="s siroko" onclick="zapri()">Zapri</button>';
+ document.getElementById('oknoVsebina').innerHTML=h;document.getElementById('okno').style.display='flex'}
+function zapri(){document.getElementById('okno').style.display='none'}
+const CITATI=[
+['Nikoli ne dvomite, da lahko majhna skupina premišljenih, zavzetih ljudi spremeni svet. Pravzaprav je to edino, kar ga je kdaj spremenilo.','Margaret Mead'],
+['Sami zmoremo tako malo, skupaj tako veliko.','Helen Keller'],
+['Bodi sprememba, ki si jo želiš videti v svetu.','pripisano Mahatmi Gandhiju'],
+['Najboljši način, da najdeš sebe, je, da se izgubiš v služenju drugim.','pripisano Mahatmi Gandhiju'],
+['Vsak je lahko velik, ker vsak lahko služi.','Martin Luther King ml.'],
+['Najbolj vztrajno in nujno vprašanje življenja je: kaj delaš za druge?','Martin Luther King ml.'],
+['Mesta lahko vsem nekaj ponudijo le zato in le takrat, ko jih ustvarjajo vsi.','Jane Jacobs'],
+['Delaj dobro tam, kjer si; ti drobni koščki dobrega skupaj preplavijo svet.','Desmond Tutu'],
+['Majhna dejanja, pomnožena z milijoni ljudi, lahko spremenijo svet.','Howard Zinn'],
+['Dobro, ki ga zagotovimo zase, je negotovo, dokler ga ne zagotovimo za vse.','Jane Addams'],
+['Poišči tiste, ki pomagajo. Vedno boš našel ljudi, ki pomagajo.','Fred Rogers (po besedah njegove mame)'],
+['Bi bil moj sosed?','Fred Rogers'],
+['Čudovito je, da nikomur ni treba čakati niti trenutka, preden začne izboljševati svet.','Anne Frank'],
+['Prostovoljci nimajo nujno časa; imajo srce.','Elizabeth Andrew'],
+['Vsi ne moremo delati velikih stvari. Lahko pa delamo majhne stvari z veliko ljubeznijo.','pripisano Materi Tereziji'],
+['Resnično srečni bodo tisti, ki bodo iskali in našli, kako služiti.','Albert Schweitzer'],
+['Nobeno dejanje prijaznosti, še tako majhno, ni nikoli zaman.','Ezop'],
+['Pot tisočih milj se začne s prvim korakom.','Lao Ce'],
+['Če hočeš iti hitro, pojdi sam. Če hočeš priti daleč, pojdi skupaj.','afriški pregovor'],
+['Kjer je volja, je tudi pot.','slovenski pregovor'],
+['Zrno do zrna pogača, kamen do kamna palača.','slovenski pregovor'],
+['V slogi je moč.','slovenski pregovor'],
+['Več glav več ve.','slovenski pregovor'],
+['Kdor hitro da, dvakrat da.','slovenski pregovor'],
+['Brez muje se še čevelj ne obuje.','slovenski pregovor'],
+['Dober sosed je boljši kot daljni brat.','slovenski pregovor']
+];
+let CIT=CITATI.map(c=>({besedilo:c[0],avtor:c[1]}));
+fetch('citati.json').then(r=>r.json()).then(j=>{if(Array.isArray(j)&&j.length){CIT=j;if(VH.length)zbirkaGumb()}}).catch(()=>{});
+const zbKljuc=()=>'letaki_zbirka_'+ime.trim().toLowerCase();
+function zbirka(){try{return JSON.parse(localStorage.getItem(zbKljuc())||'[]')}catch(e){return []}}
+function zbirkaGumb(){const b=document.getElementById('zbirkaBlok');if(!ime){b.style.display='none';return}const z=zbirka();b.style.display='block';
+ b.innerHTML='<button class="r siroko" style="margin:0" onclick="odpriZbirko()">📖 Moja zbirka citatov ('+z.length+' od '+CIT.length+')</button>'+(mojeSt()>=1||(nalozeno&&odstotek()>=100)?'<button class="g siroko" onclick="diploma()">🎓 Moja diploma</button>':'')}
+function odpriZbirko(){const z=zbirka();const m={};CIT.forEach(c=>m[c.besedilo]=c);
+ document.getElementById('oknoVsebina').innerHTML='<h2>📖 Moja zbirka citatov ('+z.length+' od '+CIT.length+')</h2>'+(z.length?z.map((t,i)=>'<div style="border-bottom:1px solid #eee;padding:8px 0"><i>»'+esc(t)+'«</i><div class="mal" style="text-align:right">— '+esc((m[t]||{}).avtor||'')+'</div></div>').join(''):'<p class="mal">Še nimaš citatov. Za vsak razdeljen vhod (»Razdelil sem«) dobiš novega!</p>')+'<button class="s siroko" onclick="zapri()">Zapri</button>';
+ document.getElementById('okno').style.display='flex'}
+const ZNACKE=[[30,'🏆 Mojster naselja'],[15,'⭐ Ulični as'],[5,'📬 Raznašalec'],[1,'👣 Prvi korak']];
+const znacka=n=>(ZNACKE.find(z=>n>=z[0])||[0,''])[1];
+const vseVrstice=()=>Object.values(stanjePo).flatMap(o=>Object.values(o));
+function razdelilci(vr){const c={};(vr||Object.values(stanje)).forEach(x=>{const r=(x.r||'').trim();if(!r||/^da$/i.test(r))return;const k=r.toLowerCase();(c[k]=c[k]||{v:r,n:0}).n++});return c}
+const mojeSt=()=>ime?((razdelilci()[ime.trim().toLowerCase()]||{}).n||0):0;
+let zavihek='os',imaStolpce=false,nalozeno=false,stanjePo={},imaPo={};
+const mojeVse=()=>ime?((razdelilci(vseVrstice())[malo(ime)]||{}).n||0):0;
+const malo=x=>String(x||'').trim().replace(/\s+/g,' ').toLowerCase();
+function casLj(v){v=(v||'').trim();if(!v)return null;let m;
+ if(m=v.match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+))?(?:,(\d+))?/))return{y:+m[1],mo:+m[2]+1,d:+m[3],h:+(m[4]||0),mi:+(m[5]||0)};
+ if(m=v.match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})(?:\D+(\d{1,2}):(\d{2}))?/))return{y:+m[3],mo:+m[2],d:+m[1],h:+(m[4]||0),mi:+(m[5]||0)};
+ if(m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\D+(\d{1,2}):(\d{2}))?/)){let a=+m[1],b=+m[2];if(a>12)[a,b]=[b,a];return{y:+m[3],mo:a,d:b,h:+(m[4]||0),mi:+(m[5]||0)}}
+ if(/^\d{4}-\d{2}-\d{2}T.*(Z|[+-]\d{2}:?\d{2})$/.test(v)){const d=new Date(v);if(isNaN(d))return null;const f=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Ljubljana',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d),g=t=>+f.find(x=>x.type==t).value;return{y:g('year'),mo:g('month'),d:g('day'),h:g('hour'),mi:g('minute')}}
+ if(m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ](\d{1,2}):(\d{2}))?/))return{y:+m[1],mo:+m[2],d:+m[3],h:+(m[4]||0),mi:+(m[5]||0)};
+ return null}
+const dnevKlj=t=>Date.UTC(t.y,t.mo-1,t.d)/864e5;
+function zakljucevalci(src,ima){const S=src||stanje;const st=i=>S[VH[i].k]||{s:'prosto'};const z={};if(!(src?ima:imaStolpce))return z;const U=[...new Set(VH.map(v=>v.u))];
+ U.forEach(u=>{const ix=VH.map((v,i)=>i).filter(i=>VH[i].u==u);if(!ix.every(i=>st(i).s=='razdeljeno'&&st(i).t))return;
+  let b=ix[0];ix.forEach(i=>{if(st(i).tr>st(b).tr)b=i});const k=malo(st(b).r);(z[k]=z[k]||[]).push(u)});return z}
+function znackeOsebe(k){const out=[];const n=(razdelilci(vseVrstice())[k]||{}).n||0;const zb=znacka(n);if(zb)out.push(zb);
+ const ts=vseVrstice().filter(x=>malo(x.r)==k&&x.t).map(x=>x.t);
+ if(ts.some(t=>t.h<8))out.push('🐦 Jutranja ptica');if(ts.some(t=>t.h>=20))out.push('🦉 Nočni čuvaj');
+ const dn=[...new Set(ts.map(dnevKlj))].sort((a,b)=>a-b);let zap=1,maks=dn.length?1:0;for(let i=1;i<dn.length;i++){zap=dn[i]==dn[i-1]+1?zap+1:1;maks=Math.max(maks,zap)}if(maks>=3)out.push('🔁 Vztrajnež');
+ const lok=ime&&k==malo(ime)?POGLAVJA.flatMap(p=>lokZakl(p.id)):[];if(POGLAVJA.some(p=>stanjePo[p.id]&&(zakljucevalci(stanjePo[p.id],imaPo[p.id])[k]||[]).length)||lok.length)out.push('🏁 Zaključevalec');
+ if(ime&&k==malo(ime)&&zbirka().length>=50)out.push('📚 Zbiratelj');return out}
+const lokZakl=id=>{try{return JSON.parse(localStorage.getItem((id||P.id)+':letaki_zakljucil_'+malo(ime))||'[]')}catch(e){return[]}};
+function lestvica(){const b=document.getElementById('lestvica');b.style.display='block';const M=['🥇','🥈','🥉'];
+ let h='<h2>Lestvica raznašalcev</h2><div class="zav"><button class="'+(zavihek=='os'?'ak':'')+'" onclick="zavihek=\'os\';lestvica()">'+esc(P.st+'. poglavje · '+P.naslov)+'</button><button class="'+(zavihek=='ek'?'ak':'')+'" onclick="zavihek=\'ek\';lestvica()">Ekipe</button></div>';
+ if(zavihek=='ek'){if(!imaStolpce){b.innerHTML=h+'<p class="mal">Ekipe začnejo šteti, ko je posodobljen skript.</p>';return}
+  const l=ekipeData().filter(t=>t.n).slice(0,10);b.innerHTML=h+(l.length?ekipeHTML(l,1):'<p class="mal">Še nobena ekipa nima razdeljenih vhodov. Vpiši ekipo zgoraj!</p>');return}
+ const t=Object.values(razdelilci()).sort((a,b)=>b.n-a.n||a.v.localeCompare(b.v,'sl')).slice(0,10);
+ if(!t.length){b.innerHTML=h+'<p class="mal">Še nihče ni označil razdeljenih vhodov. Bodi prvi! 👣</p>';return}
+ b.innerHTML=h+t.map((x,i)=>'<div class="lv'+(ime&&malo(x.v)==malo(ime)?' jaz':'')+'"><span class="m">'+(M[i]||(i+1)+'.')+'</span><span class="v">'+esc(x.v)+'<span class="zn">'+znackeOsebe(malo(x.v)).join(' · ')+'</span></span><span class="n">'+x.n+'</span></div>').join('')}
+const MEJ={25:'Četrtina naselja je pokrita!',50:'Pol naselja je pokritega!',75:'Tri četrtine naselja je pokritih!',100:'Vse Savsko naselje je pokrito! Hvala vsem!'};
+const odstotek=()=>{const n=VH.length||173;return Math.floor(Object.values(stanje).filter(x=>x.s=='razdeljeno').length*100/n)};
+function stevec(){const n=VH.length||173,v=Object.values(stanje),d=v.filter(x=>x.s=='razdeljeno').length,p=v.filter(x=>x.s=='prevzeto').length,pc=Math.round(d*100/n);
+ document.getElementById('stevec').innerHTML=(ZAKLJ?'<p class="zakl">✓ To poglavje je zaključeno. Hvala vsem, ki ste sodelovali!</p>':'')+'<p class="vel">'+esc(PIME)+' – razdelili smo '+d+' od '+n+' vhodov</p><div class="trakw"><div class="trak"><div style="width:'+pc+'%"></div>'+[25,50,75].map(m=>'<i style="left:'+m+'%"></i>').join('')+'</div>'+[25,50,75,100].map(m=>'<b style="position:absolute;top:32px;font-size:12px;color:'+(pc>=m?'#0a5232':'#888')+';left:'+Math.min(m,97)+'%;transform:translateX(-50%)">'+(pc>=m?'✓':'')+m+'%</b>').join('')+'</div><p class="mal" style="margin:0"><b>'+pc+' %</b> razdeljeno · še vzetih (nerazdeljenih) '+p+'</p>'}
+function proslava(naslov,besedilo){document.getElementById('oknoVsebina').innerHTML='<div class="proslava"><p class="vel">'+naslov+'</p><p>'+besedilo+'</p><button class="z siroko" onclick="zapri()">Super!</button></div>';document.getElementById('okno').style.display='flex'}
+function mejniki(){if(ZAKLJ||!nalozeno||!VH.length)return false;const pc=odstotek();let vid;try{vid=JSON.parse(localStorage.getItem(pk('letaki_mejniki'))||'[]')}catch(e){vid=[]}
+ const nov=[25,50,75,100].filter(m=>pc>=m&&!vid.includes(m));if(!nov.length)return false;localStorage.setItem(pk('letaki_mejniki'),JSON.stringify(vid.concat(nov)));
+ const m=Math.max(...nov);proslava('🎉 '+m+' %!',esc(PIME)+'<br>'+MEJ[m]+'<br>Skupaj smo razdelili '+Object.values(stanje).filter(x=>x.s=='razdeljeno').length+' od '+VH.length+' vhodov.');return true}
+function diploma(){const k=malo(ime),n=mojeVse(),zn=znackeOsebe(k);
+ const pz=POGLAVJA.filter(p=>stanjePo[p.id]&&(razdelilci(Object.values(stanjePo[p.id]))[k]||{}).n).map(p=>p.st+'. poglavje: '+p.naslov+' ('+razdelilci(Object.values(stanjePo[p.id]))[k].n+')');
+ document.getElementById('oknoVsebina').innerHTML='<h2>🎓 Moja diploma</h2><canvas id="diplPlatno" width="1600" height="1131"></canvas><a class="g siroko" id="diplPrenos" download="diploma-savski-razdeljevalec.png" style="display:block;text-align:center;text-decoration:none;padding:12px;border-radius:10px;margin-top:8px">Prenesi diplomo (PNG)</a>'+(navigator.share?'<button class="z siroko" onclick="deliDiplomo()">Deli</button>':'')+'<button class="s siroko" onclick="zapri()">Zapri</button>';
+ document.getElementById('okno').style.display='flex';const c=document.getElementById('diplPlatno').getContext('2d');
+ const ris=()=>{c.fillStyle='#fffdf5';c.fillRect(0,0,1600,1131);c.strokeStyle='#0a5232';c.lineWidth=18;c.strokeRect(40,40,1520,1051);c.strokeStyle='#ffd84d';c.lineWidth=6;c.strokeRect(72,72,1456,987);
+  if(LOGO.complete&&LOGO.naturalWidth)c.drawImage(LOGO,730,100,140,140*LOGO.naturalHeight/LOGO.naturalWidth);
+  c.textAlign='center';c.fillStyle='#063a23';c.font='bold 76px Georgia,serif';c.fillText('Diploma Savskega razdeljevalca',800,330);
+  c.font='34px system-ui,sans-serif';c.fillStyle='#333';c.fillText('Ta diploma potrjuje, da je',800,410);
+  c.font='bold 88px Georgia,serif';c.fillStyle='#0a5232';c.fillText(ime,800,520);c.fillStyle='#ffd84d';c.fillRect(500,548,600,8);
+  c.font='38px system-ui,sans-serif';c.fillStyle='#222';c.fillText('razdelil(a) gradivo na '+n+' '+(n%100==1?'vhod':n%100==2?'vhoda':n%100==3||n%100==4?'vhode':'vhodov')+' v Savskem naselju',800,615);
+  c.font='30px system-ui,sans-serif';c.fillStyle='#0a5232';c.fillText((pz.length?pz:[PIME]).join('  ·  ').slice(0,110),800,665);
+  c.font='34px system-ui,sans-serif';c.fillStyle='#063a23';const zs=zn.join('   ');c.fillText(zs||'',800,730);
+  c.font='30px system-ui,sans-serif';c.fillStyle='#444';c.fillText('Ljubljana, '+new Date().toLocaleDateString('sl-SI',{timeZone:'Europe/Ljubljana'}),800,800);
+  c.font='italic 28px system-ui,sans-serif';c.fillText('Hvala, ker skrbiš za naše sosedstvo! 💚',800,860);
+  c.font='22px system-ui,sans-serif';c.fillStyle='#555';c.fillText('Neodvisna pobuda prebivalcev Savskega naselja, ni povezana z nobeno listo ali kandidatom.',800,1010);
+  document.getElementById('diplPrenos').href=document.getElementById('diplPlatno').toDataURL('image/png')};
+ ris();if(!LOGO.complete)LOGO.onload=ris}
+const LOGO=new Image();LOGO.src='../logo.png';
+async function deliDiplomo(){try{const b=await new Promise(r=>document.getElementById('diplPlatno').toBlob(r,'image/png'));const f=new File([b],'diploma-savski-razdeljevalec.png',{type:'image/png'});
+ if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'Diploma Savskega razdeljevalca'});else await navigator.share({title:'Diploma Savskega razdeljevalca',url:location.href})}catch(e){}}
+function citat(predZn){const z0=zbirka(),ima=new Set(z0),nove=CIT.filter(c=>!ima.has(c.besedilo)),izb=nove.length?nove:CIT,cc=izb[Math.floor(Math.random()*izb.length)],c=[cc.besedilo,cc.avtor],n=mojeSt(),z=znacka(n);
+ if(nove.length){z0.push(cc.besedilo);try{localStorage.setItem(zbKljuc(),JSON.stringify(z0))}catch(e){}}zbirkaGumb();
+ document.getElementById('oknoVsebina').innerHTML='<h2>🎉 Bravo!</h2><p class="citat">»'+esc(c[0])+'«</p><p class="avtor">— '+esc(c[1])+'</p><p><b>Razdelil si '+n+' '+(n==1?'vhod':n==2?'vhoda':n<5?'vhode':'vhodov')+'. Hvala!</b></p>'+'<p>'+(nove.length?'📖 Nov citat v tvoji zbirki! '+z0.length+' od '+CIT.length:'📖 Zbral si vse citate! ('+CIT.length+')')+'</p>'+(z&&z!=predZn?'<p>Nova značka: <b>'+z+'</b></p>':'')+'<button class="z siroko" onclick="zapri()">Naprej</button>';
+ document.getElementById('okno').style.display='flex'}
+async function akcija(ids,a){if(ZAKLJ)return;
+ if(!ime){zapri();obv('Najprej zgoraj vpiši vzdevek ali začetnice.');window.scrollTo({top:0,behavior:'smooth'});return}
+ const op=a=='opomba'?(document.getElementById('opomba')||{}).value||'':'';
+ if(a=='opomba'&&!op.trim()){obv('Najprej napiši opombo.');return}
+ {const e=document.getElementById('ekipa');if(e&&e.value.trim()&&e.value.trim()!=ekipaGet()){obv('Potrdi ekipo (ali izbriši ime) pred pošiljanjem.',1);e.focus();return}}zapri();obv('Shranjujem …',0);let ok=0,zad='';const predZn=znacka(mojeSt()),ekipa=ekipaGet().slice(0,30);
+ const pokrita=u=>VH.every((v,i)=>v.u!=u||st(i).s=='razdeljeno'),ulA=[...new Set(ids.map(i=>VH[i].u))],predP=ulA.filter(pokrita);
+ for(const i of ids){try{const r=await fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:a,poglavje:P.id,ulica:VH[i].u,st:VH[i].n,kdo:ime,opomba:op,ekipa:ekipa,cas:new Date().toISOString()})});
+  const j=await r.json();zad=j.sporocilo;if(j.ok){ok++;const s=Object.assign({},st(i));
+   if(a=='prevzemi')s.p=ime;if(a=='razdeljeno'){s.r=ime;if(!s.p)s.p=ime;if(ekipa)s.e=ekipa;if(imaStolpce){const d=new Date();s.t=casLj(d.toISOString());s.tr=d.getTime()}}if(a=='sprosti'){s.p='';s.r='';s.e='';s.t=null;s.tr=0}if(a=='opomba')s.o=(s.o?s.o+' | ':'')+ime+': '+op.trim();
+   s.s=s.r?'razdeljeno':s.p?'prevzeto':'prosto';stanje[VH[i].k]=s}}catch(e){zad='Ni povezave. Poskusi znova.'}
+  if(ids.length>1)obv('Shranjujem … '+ok+'/'+ids.length,0)}
+ obv(ids.length>1?'Shranjeno '+ok+' od '+ids.length+'.':zad);const noveP=a=='razdeljeno'?ulA.filter(u=>!predP.includes(u)&&pokrita(u)):[];
+ if(noveP.length){const l=lokZakl();localStorage.setItem(pk('letaki_zakljucil_'+malo(ime)),JSON.stringify([...new Set(l.concat(noveP))]))}
+ osvezi();if(a=='razdeljeno'&&ok){document.getElementById('obv').style.display='none';
+  if(noveP.length){proslava(esc(noveP.join(', '))+(noveP.length>1?' so pokrite! 🎉':' je pokrita! 🎉'),'Razdelil si zadnji vhod. Dobil si značko <b>🏁 Zaključevalec</b>!<br><br><button class="r" onclick="citat(\''+predZn.replace(/'/g,'')+'\')">Pokaži moj citat</button>')}
+  else if(!mejniki())citat(predZn)}
+ setTimeout(nalozi,6000)}
+// v7: plast »Točke ogleda« (zaveze MOL); podatki letaki/ogled.json (backend/ogled-tocke.py). Brez skupnih rezultatov.
+let OG=null,ogSloj=null,ogMB=null;const ogK=id=>'ogled:'+id,ogMoj=id=>{try{return localStorage.getItem(ogK(id))||''}catch(e){return ''}};
+function ogledUI(){const b=document.getElementById('ogledBox');b.style.display=ime&&!ZAKLJ?'block':'none';if(!ime&&ogSloj){map.removeLayer(ogSloj);document.getElementById('ogledVkl').checked=false}}
+function ogIkona(z){return L.divIcon({className:'ogt'+(ogMoj(z.id)?' d':''),html:'<span>'+z.st+'</span>',iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]})}
+function ogPopup(z){const m=ogMoj(z.id);return '<b>Točka '+z.st+'</b> – '+esc(z.opis)+(z.lastnistvo?'<br><span class="mal">Zemljišče: '+esc(z.lastnistvo)+'</span>':'')+
+ '<p style="margin:6px 0">MOL je v odgovoru napisal: »'+esc(z.obljuba)+'«</p><p class="mal" style="margin:0">Lokacija je lahko približna – upoštevaj opis. Ogleduješ kot prebivalec, ne v imenu ČS ali MOL.</p>'+
+ '<div class="ogb">'+[['D','narejeno'],['N','ni narejeno'],['?','ni mogoče ugotoviti']].map(([k,t])=>'<button title="'+t+'" class="'+(m==k?'iz':'')+'" onclick="ogOceni(\''+z.id+'\',\''+k+'\')">'+k+'</button>').join('')+'</div><div class="mal">D = narejeno, N = ni narejeno, ? = ni mogoče ugotoviti</div>'}
+async function ogledPlast(){const on=document.getElementById('ogledVkl').checked;if(!on){if(ogSloj)map.removeLayer(ogSloj);return}if(!ime)return;
+ if(!OG){try{OG=await (await fetch('ogled.json?t='+Date.now())).json()}catch(e){obv('Točk ogleda ni bilo mogoče naložiti.');return}
+  ogSloj=L.layerGroup(OG.map(z=>{const m=L.marker(z.ll,{icon:ogIkona(z)});m.on('popupopen',()=>{ogMB=map.options.maxBounds;map.setMaxBounds(null)}).on('popupclose',()=>{if(ogMB)map.setMaxBounds(ogMB)});m.bindPopup(()=>ogPopup(z),{maxWidth:260,autoPanPadding:[10,10]});z.m=m;return m}))}
+ ogSloj.addTo(map)}
+async function ogOceni(id,k){if(!ime){obv('Najprej zgoraj vpiši vzdevek.');return}try{localStorage.setItem(ogK(id),k)}catch(e){}
+ const z=OG.find(x=>x.id==id);z.m.setIcon(ogIkona(z));z.m.closePopup();
+ try{const r=await (await fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:'ogled',kdo:ime,tocka:id,ocena:k,cas:new Date().toISOString()})})).json();obv(r&&r.ok?'Zabeleženo: točka '+z.st+' = '+k+'.':'Shranjeno na napravi; strežnik: '+((r&&r.sporocilo)||'napaka'))}
+ catch(e){obv('Shranjeno na tvoji napravi (strežnik ni dosegljiv).')}}
+function osvezi(){ogledUI();jaz();moji();ulice();lestvica();ekipeSeznam();stevec();zbirkaGumb();if(ZAKLJ)['jaz','moji','uliceBlok'].forEach(i=>document.getElementById(i).style.display='none');
+ tocke.forEach((m,i)=>{const x=st(i),v=VH[i];m.setStyle({fillColor:BARVA[x.s]});m.setTooltipContent(esc(v.u+' '+v.n+(x.s=='razdeljeno'?' · razdelil '+x.r:x.p?' · rezerviral '+x.p:'')))});
+ const n=VH.length,p=VH.filter((v,i)=>st(i).s!='prosto').length,d=VH.filter((v,i)=>st(i).s=='razdeljeno').length;
+ document.getElementById('povzetek').textContent='Vzetih '+p+' od '+n+' naslovov, razdeljenih '+d+'.'}
+const jeRaz=x=>{x=(x||'').trim();return x&&!/^ne$/i.test(x)};
+function preberi(t){if(t.trim().startsWith('<'))throw 0;
+ const rows=parseCSV(t),ima=/ekipa/i.test((rows[0]||[])[5]||'')||/razdeljeno ob/i.test((rows[0]||[])[6]||'');const ns={};rows.slice(1).forEach(x=>{if(!x[0])return;const p=(x[2]||'').trim();let r=(x[3]||'').trim();if(/^(da|ja|x|✅)$/i.test(r))r=p||'da';if(!jeRaz(r))r='';
+  const tt=r?casLj(x[6]):null;
+  ns[norm(x[0])+'|'+norm(x[1])]={p,r,o:(x[4]||'').trim(),e:r?(x[5]||'').trim():'',t:tt,tr:tt?Date.UTC(tt.y,tt.mo-1,tt.d,tt.h,tt.mi||0,tt.se||0):0,s:r?'razdeljeno':p?'prevzeto':'prosto'}});return{ns,ima}}
+let ostaliNalozeni=0;
+async function nalozi(){try{const t=await (await fetch(CSV+'&t='+Date.now())).text();const {ns,ima}=preberi(t);imaStolpce=ima;imaPo[P.id]=ima;
+ // druga poglavja (za »Vsa poglavja« in skupne značke); zaključena se ne spreminjajo, zato jih naložimo enkrat
+ await Promise.all(POGLAVJA.filter(p=>p.id!=P.id&&(p.stanje=='aktivno'||!stanjePo[p.id])).map(p=>fetch(csvZa(p)+'&t='+Date.now()).then(r=>r.text()).then(t=>{const x=preberi(t);stanjePo[p.id]=x.ns;imaPo[p.id]=x.ima}).catch(e=>console.warn('poglavje',p.id,e))));
+ await naloziEkipe();stanje=ns;stanjePo[P.id]=ns;nalozeno=true;osvezi();if(document.getElementById('okno').style.display!='flex')mejniki()}catch(e){console.warn(e)}}
+const map=L.map('map',{zoomSnap:.25,renderer:L.canvas({tolerance:7})});
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+Promise.all([fetch('vhodi.json').then(r=>r.json()),fetch('meja.json').then(r=>r.json()),nalozenaPoglavja]).then(([v,meja])=>{
+ VH=v.map(x=>({u:x[0],n:x[1],k:norm(x[0])+'|'+norm(x[1]),ll:[x[2],x[3]]}));
+ const ring=meja.map(c=>[c[1],c[0]]);
+ L.polygon([[[-90,-180],[-90,180],[90,180],[90,-180]],ring],{stroke:false,fillColor:'#fff',fillOpacity:1,interactive:false}).addTo(map);
+ L.polygon(ring,{color:'#063a23',weight:3,fill:false,interactive:false}).addTo(map);
+ tocke=VH.map((x,i)=>L.circleMarker(x.ll,{radius:5,color:'#222',weight:1,fillColor:BARVA.prosto,fillOpacity:.95}).on('click',()=>naslov(i)).bindTooltip(x.u+' '+x.n,{direction:'top'}).addTo(map));
+ const b=L.latLngBounds(ring);map.fitBounds(b,{padding:[2,2]});map.setMaxBounds(b.pad(0.15));map.options.maxBoundsViscosity=1;map.setMinZoom(map.getZoom());
+ osvezi();nalozi();setInterval(nalozi,60000)});
+</script></body></html>
