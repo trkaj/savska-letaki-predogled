@@ -67,7 +67,7 @@ details.ek summary:after{content:'▸';color:#888}details.ek[open] summary:after
 <button class="g siroko" id="vseProste"></button><div id="stevilke"></div></div></div>
 
 <div class="blok karta"><h2>Zemljevid</h2><p class="mal leg">Pregled: <span style="background:#c9c9c9"></span>prosto<span style="background:#ffd84d"></span>vzeto<span style="background:#2e9e5b"></span>razdeljeno</p>
-<p id="povzetek" class="mal"></p><div id="map"></div><div id="ogledBox"><label><input type="checkbox" id="ogledVkl" onchange="ogledPlast()"> Točke ogleda</label> <span class="mal">(vidno samo prijavljenim; tvoja ocena ostane na tvoji napravi in gre v tabelo, rezultatov ne objavljamo pred volitvami 15. 11.)</span></div><p style="margin:10px 0 0"><b>🖨 Natisni zemljevid</b> <span class="mal">(A4 ležeče)</span></p><div style="display:flex;gap:8px"><button class="s" style="flex:1" onclick="tisk('barvno')">Barvno</button><button class="s" style="flex:1" onclick="tisk('cb')">Črno-belo</button></div></div>
+<p id="povzetek" class="mal"></p><div id="map"></div><div id="ogledBox"><label><input type="checkbox" id="ogledVkl" onchange="ogledPlast()"> 🪧 Kažipot zavez</label> <span class="mal">(vidno samo prijavljenim; tvoja ocena ostane na tvoji napravi in gre v tabelo, rezultatov ne objavljamo pred volitvami 15. 11.)</span></div><p style="margin:10px 0 0"><b>🖨 Natisni zemljevid</b> <span class="mal">(A4 ležeče)</span></p><div style="display:flex;gap:8px"><button class="s" style="flex:1" onclick="tisk('barvno')">Barvno</button><button class="s" style="flex:1" onclick="tisk('cb')">Črno-belo</button></div></div>
 
 <p class="mal" style="padding:0 16px 30px">Težave? Pokliči ali pošlji SMS na 070 205 595. Vse je zapisano tudi v <a id="tabela" href="#">tabeli</a>.</p>
 
@@ -314,11 +314,11 @@ async function akcija(ids,a){if(ZAKLJ)return;
 // v7: plast »Točke ogleda« (zaveze MOL); podatki letaki/ogled.json (backend/ogled-tocke.py). Brez skupnih rezultatov.
 let OG=null,ogSloj=null,ogMB=null;const ogK=id=>'ogled:'+id,ogMoj=id=>{try{return localStorage.getItem(ogK(id))||''}catch(e){return ''}};
 function ogledUI(){const b=document.getElementById('ogledBox');b.style.display=ime&&!ZAKLJ?'block':'none';if(!ime&&ogSloj){map.removeLayer(ogSloj);document.getElementById('ogledVkl').checked=false}}
-function ogIkona(z){return L.divIcon({className:'ogt'+(ogMoj(z.id)?' d':''),html:'<span>'+z.st+'</span>',iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]})}
+function ogIkona(z){return L.divIcon({className:'ogt'+(ogMoj(z.id)?' d':''),html:'<span>'+(z.postaja||z.st)+'</span>',iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]})}
 function ogKr(t,n){t=t||'';return t.length>n?t.slice(0,n).replace(/\s+\S*$/,'')+' …':t}
 function ogVec(b){const d=b.nextElementSibling,o=d.style.display=='none';d.style.display=o?'block':'none';b.textContent=o?'Manj ▴':'Več ▾ (daljši opis)'}
-function ogPopup(z){const m=ogMoj(z.id);return '<b>Točka '+z.st+'</b> – '+esc(z.opis)+(z.lastnistvo?'<br><span class="mal">Zemljišče: '+esc(z.lastnistvo=='javno'?'po katastru MOL':z.lastnistvo)+'</span>':'')+
- (z.mandat=='varnost'?'<div class="mal" style="color:#b00020">Starejša pobuda – varnost: '+esc(z.razlog)+'</div>':'')+(z.mandat=='starejsa'?'<div class="mal" style="color:#a35a00">Starejša pobuda (pred 2022) – še aktualna, ker: '+esc(z.razlog)+'</div>':'')+(z.naslov||z.opis_dolg?'<p style="margin:6px 0 0">Pobuda'+(z.datum_pobude?' ('+esc(z.datum_pobude)+')':'')+': <i>'+esc(z.naslov||ogKr(z.opis_dolg,90))+'</i></p>':'')+
+function ogPopup(z){const m=ogMoj(z.id);return '🪧 <b>Postaja '+(z.postaja||z.st)+' od '+OG.length+'</b>'+(z.naslov||z.opis_dolg?' · Pobuda'+(z.datum_pobude?' ('+esc(z.datum_pobude)+')':'')+': <i>'+esc(z.naslov||ogKr(z.opis_dolg,90))+'</i>':'')+'<br>📍 '+esc(z.opis)+(z.lastnistvo?'<br><span class="mal">Zemljišče: '+esc(z.lastnistvo=='javno'?'po katastru MOL':z.lastnistvo)+'</span>':'')+
+ (z.mandat=='varnost'?'<div class="mal" style="color:#b00020">Starejša pobuda – varnost: '+esc(z.razlog)+'</div>':'')+(z.mandat=='starejsa'?'<div class="mal" style="color:#a35a00">Starejša pobuda (pred 2022) – še aktualna, ker: '+esc(z.razlog)+'</div>':'')+
  '<p style="margin:6px 0">MOL je'+(z.datum_odgovora?' '+esc(z.datum_odgovora):'')+' v odgovoru napisal: »'+esc(z.obljuba)+'«'+(z.rok?'<br><span class="mal">Rok v odgovoru: '+esc(z.rok)+'</span>':'')+'</p>'+
  (z.stanje_portal?'<div class="mal">Stanje na portalu MOL: '+esc(z.stanje_portal)+'</div>':'')+
  (z.opis_dolg||z.obljuba_cela?'<a href="#" class="ogvec" onclick="ogVec(this);return false">Več ▾ (daljši opis)</a><div style="display:none;max-height:200px;overflow:auto;font-size:12px;border-left:2px solid #ccc;padding-left:6px;margin:4px 0">'+
@@ -329,12 +329,13 @@ function ogPopup(z){const m=ogMoj(z.id);return '<b>Točka '+z.st+'</b> – '+esc
  '<div class="ogb">'+[['D','narejeno'],['N','ni narejeno'],['?','ni mogoče ugotoviti']].map(([k,t])=>'<button title="'+t+'" class="'+(m==k?'iz':'')+'" onclick="ogOceni(\''+z.id+'\',\''+k+'\')">'+k+'</button>').join('')+'</div><div class="mal">D = narejeno, N = ni narejeno, ? = ni mogoče ugotoviti</div>'}
 async function ogledPlast(){const on=document.getElementById('ogledVkl').checked;if(!on){if(ogSloj)map.removeLayer(ogSloj);return}if(!ime)return;
  if(!OG){try{OG=await (await fetch('ogled.json?t='+Date.now())).json()}catch(e){obv('Točk ogleda ni bilo mogoče naložiti.');return}
-  ogSloj=L.layerGroup(OG.map(z=>{const m=L.marker(z.ll,{icon:ogIkona(z)});m.on('popupopen',()=>{ogMB=map.options.maxBounds;map.setMaxBounds(null)}).on('popupclose',()=>{if(ogMB)map.setMaxBounds(ogMB)});m.bindPopup(()=>ogPopup(z),{maxWidth:260,autoPanPadding:[10,10]});z.m=m;return m}))}
+  OG.sort((a,b)=>(a.postaja||a.st)-(b.postaja||b.st));ogSloj=L.layerGroup([L.polyline(OG.map(z=>z.ll),{color:'#555',weight:2,dashArray:'4 6',opacity:.8,interactive:false})].concat(OG.map(z=>{const m=L.marker(z.ll,{icon:ogIkona(z)});m.on('popupopen',()=>{ogMB=map.options.maxBounds;map.setMaxBounds(null)}).on('popupclose',()=>{if(ogMB)map.setMaxBounds(ogMB)});m.bindPopup(()=>ogPopup(z),{maxWidth:260,autoPanPadding:[10,10]});z.m=m;return m})))}
  ogSloj.addTo(map)}
 async function ogOceni(id,k){if(!ime){obv('Najprej zgoraj vpiši vzdevek.');return}try{localStorage.setItem(ogK(id),k)}catch(e){}
  const z=OG.find(x=>x.id==id);z.m.setIcon(ogIkona(z));z.m.closePopup();
- try{const r=await (await fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:'ogled',kdo:ime,tocka:id,ocena:k,cas:new Date().toISOString()})})).json();obv(r&&r.ok?'Zabeleženo: točka '+z.st+' = '+k+'.':'Shranjeno na napravi; strežnik: '+((r&&r.sporocilo)||'napaka'))}
+ try{const r=await (await fetch(SKRIPT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({akcija:'ogled',kdo:ime,tocka:id,ocena:k,cas:new Date().toISOString()})})).json();obv(r&&r.ok?ogNaprej(z):'Shranjeno na napravi; strežnik: '+((r&&r.sporocilo)||'napaka'))}
  catch(e){obv('Shranjeno na tvoji napravi (strežnik ni dosegljiv).')}}
+function ogNaprej(z){const p=z.postaja||z.st;return p<OG.length?'✅ Postaja '+p+' opravljena! Naprej na postajo '+(p+1)+' →':'🏁 Postaja '+p+' opravljena – to je bila zadnja. Hvala za sprehod!'}
 function osvezi(){ogledUI();jaz();moji();ulice();lestvica();ekipeSeznam();stevec();zbirkaGumb();if(ZAKLJ)['jaz','moji','uliceBlok'].forEach(i=>document.getElementById(i).style.display='none');
  tocke.forEach((m,i)=>{const x=st(i),v=VH[i];m.setStyle({fillColor:BARVA[x.s]});m.setTooltipContent(esc(v.u+' '+v.n+(x.s=='razdeljeno'?' · razdelil '+x.r:x.p?' · rezerviral '+x.p:'')))});
  const n=VH.length,p=VH.filter((v,i)=>st(i).s!='prosto').length,d=VH.filter((v,i)=>st(i).s=='razdeljeno').length;
