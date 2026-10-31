@@ -315,8 +315,17 @@ async function akcija(ids,a){if(ZAKLJ)return;
 let OG=null,ogSloj=null,ogMB=null;const ogK=id=>'ogled:'+id,ogMoj=id=>{try{return localStorage.getItem(ogK(id))||''}catch(e){return ''}};
 function ogledUI(){const b=document.getElementById('ogledBox');b.style.display=ime&&!ZAKLJ?'block':'none';if(!ime&&ogSloj){map.removeLayer(ogSloj);document.getElementById('ogledVkl').checked=false}}
 function ogIkona(z){return L.divIcon({className:'ogt'+(ogMoj(z.id)?' d':''),html:'<span>'+z.st+'</span>',iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-10]})}
-function ogPopup(z){const m=ogMoj(z.id);return '<b>Točka '+z.st+'</b> – '+esc(z.opis)+(z.lastnistvo?'<br><span class="mal">Zemljišče: '+esc(z.lastnistvo)+'</span>':'')+
- '<p style="margin:6px 0">MOL je v odgovoru napisal: »'+esc(z.obljuba)+'«</p><p class="mal" style="margin:0">Lokacija je lahko približna – upoštevaj opis. Ogleduješ kot prebivalec, ne v imenu ČS ali MOL.</p>'+
+function ogKr(t,n){t=t||'';return t.length>n?t.slice(0,n).replace(/\s+\S*$/,'')+' …':t}
+function ogVec(b){const d=b.nextElementSibling,o=d.style.display=='none';d.style.display=o?'block':'none';b.textContent=o?'Manj ▴':'Več ▾ (daljši opis)'}
+function ogPopup(z){const m=ogMoj(z.id);return '<b>Točka '+z.st+'</b> – '+esc(z.opis)+(z.lastnistvo?'<br><span class="mal">Zemljišče: '+esc(z.lastnistvo=='javno'?'po katastru MOL':z.lastnistvo)+'</span>':'')+
+ (z.naslov||z.opis_dolg?'<p style="margin:6px 0 0">Pobuda'+(z.datum_pobude?' ('+esc(z.datum_pobude)+')':'')+': <i>'+esc(z.naslov||ogKr(z.opis_dolg,90))+'</i></p>':'')+
+ '<p style="margin:6px 0">MOL je'+(z.datum_odgovora?' '+esc(z.datum_odgovora):'')+' v odgovoru napisal: »'+esc(z.obljuba)+'«'+(z.rok?'<br><span class="mal">Rok v odgovoru: '+esc(z.rok)+'</span>':'')+'</p>'+
+ (z.stanje_portal?'<div class="mal">Stanje na portalu MOL: '+esc(z.stanje_portal)+'</div>':'')+
+ (z.opis_dolg||z.obljuba_cela?'<a href="#" class="ogvec" onclick="ogVec(this);return false">Več ▾ (daljši opis)</a><div style="display:none;max-height:200px;overflow:auto;font-size:12px;border-left:2px solid #ccc;padding-left:6px;margin:4px 0">'+
+  (z.lastnistvo=='javno'?'<span class="mal">Zemljišče: po katastru MOL (ni potrjeno v zemljiški knjigi)</span><br>':'')+(z.opis_dolg?'<b>Pobuda'+(z.datum_pobude?' ('+esc(z.datum_pobude)+')':'')+' št. '+esc(z.id)+':</b><br>'+esc(z.opis_dolg).replace(/\n/g,'<br>'):'')+
+  (z.obljuba_cela?'<br><b>Odgovor MOL'+(z.datum_odgovora?' ('+esc(z.datum_odgovora)+')':'')+':</b><br>'+esc(z.obljuba_cela).replace(/\n/g,'<br>'):'')+
+  (z.url?'<br><a href="'+esc(z.url)+'" target="_blank" rel="noopener">Pobuda na portalu MOL</a>':'<br><span class="mal">Na portalu pobude.ljubljana.si poišči ID '+esc(z.id)+' (neposredne povezave portal ne omogoča).</span>')+'</div>':'')+
+ '<p class="mal" style="margin:4px 0 0">Lokacija je lahko približna – upoštevaj opis. Ogleduješ kot prebivalec, ne v imenu ČS ali MOL.</p>'+
  '<div class="ogb">'+[['D','narejeno'],['N','ni narejeno'],['?','ni mogoče ugotoviti']].map(([k,t])=>'<button title="'+t+'" class="'+(m==k?'iz':'')+'" onclick="ogOceni(\''+z.id+'\',\''+k+'\')">'+k+'</button>').join('')+'</div><div class="mal">D = narejeno, N = ni narejeno, ? = ni mogoče ugotoviti</div>'}
 async function ogledPlast(){const on=document.getElementById('ogledVkl').checked;if(!on){if(ogSloj)map.removeLayer(ogSloj);return}if(!ime)return;
  if(!OG){try{OG=await (await fetch('ogled.json?t='+Date.now())).json()}catch(e){obv('Točk ogleda ni bilo mogoče naložiti.');return}
